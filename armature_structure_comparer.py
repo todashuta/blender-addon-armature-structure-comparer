@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Armature Structure Comparer",
     "author": "todashuta",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
     "blender": (2, 80, 0),
     "location": "3D View > Side Bar > Item > Armature Structure Comparer",
     "description": "",
@@ -48,11 +48,11 @@ class ARMATURE_STRUCTURE_COMPARER_PT_panel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-        layout.prop_search(scene, "armature_structure_comparer_armatureA", bpy.data, "objects")
-        layout.prop_search(scene, "armature_structure_comparer_armatureB", bpy.data, "objects")
+        layout.prop(scene, "armature_structure_comparer_armatureA")
+        layout.prop(scene, "armature_structure_comparer_armatureB")
 
-        armatureA = bpy.data.objects.get(scene.armature_structure_comparer_armatureA)
-        armatureB = bpy.data.objects.get(scene.armature_structure_comparer_armatureB)
+        armatureA = scene.armature_structure_comparer_armatureA
+        armatureB = scene.armature_structure_comparer_armatureB
 
         layout.separator()
 
@@ -97,11 +97,17 @@ classes = (
 )
 
 
+def armature_poll_func(self, object):
+    return object.type == "ARMATURE"
+
+
 def register():
     for c in classes:
         bpy.utils.register_class(c)
-    bpy.types.Scene.armature_structure_comparer_armatureA = bpy.props.StringProperty(name="Armature A")
-    bpy.types.Scene.armature_structure_comparer_armatureB = bpy.props.StringProperty(name="Armature B")
+    bpy.types.Scene.armature_structure_comparer_armatureA = bpy.props.PointerProperty(
+                name="Armature A", type=bpy.types.Object, poll=armature_poll_func)
+    bpy.types.Scene.armature_structure_comparer_armatureB = bpy.props.PointerProperty(
+                name="Armature B", type=bpy.types.Object, poll=armature_poll_func)
 
 
 def unregister():
