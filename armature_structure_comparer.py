@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Armature Structure Comparer",
     "author": "todashuta",
-    "version": (1, 0, 1),
+    "version": (1, 0, 2),
     "blender": (2, 80, 0),
     "location": "3D View > Side Bar > Item > Armature Structure Comparer",
     "description": "",
@@ -56,19 +56,19 @@ class ARMATURE_STRUCTURE_COMPARER_PT_panel(bpy.types.Panel):
 
         layout.separator()
 
-        if armatureA is None or armatureA.type != "ARMATURE":
+        if armatureA is None:
             layout.label(icon="INFO", text="Please Set Armature A Object")
             return
-        if armatureB is None or armatureB.type != "ARMATURE":
+        if armatureB is None:
             layout.label(icon="INFO", text="Please Set Armature B Object")
             return
 
-        armatureA_bonenames = set([bone.name for bone in armatureA.data.bones])
-        armatureB_bonenames = set([bone.name for bone in armatureB.data.bones])
+        armatureA_bonenames = set(armatureA.data.bones.keys())
+        armatureB_bonenames = set(armatureB.data.bones.keys())
 
         existsOnlyInA = armatureA_bonenames - armatureB_bonenames
         existsOnlyInB = armatureB_bonenames - armatureA_bonenames
-        existsInBoth = armatureB_bonenames & armatureA_bonenames
+        existsInBoth  = armatureB_bonenames & armatureA_bonenames
 
         layout.label(text="Exists only in A:")
         for name in existsOnlyInA:
@@ -80,15 +80,12 @@ class ARMATURE_STRUCTURE_COMPARER_PT_panel(bpy.types.Panel):
 
         layout.label(text="Parent Bone not Matched:")
         for name in existsInBoth:
-            a_bone = armatureA.data.bones[name]
-            b_bone = armatureB.data.bones[name]
-            if (a_bone.parent is not None and
-                    b_bone.parent is not None and
-                    a_bone.parent.name == b_bone.parent.name):
-                pass
-            elif a_bone.parent is None and b_bone.parent is None:
-                pass
-            else:
+            a_parent = armatureA.data.bones[name].parent
+            b_parent = armatureB.data.bones[name].parent
+            parent_type_mismatch = type(a_parent) is not type(b_parent)
+            parent_name_mismatch = a_parent is not None and b_parent is not None and a_parent.name != b_parent.name
+
+            if parent_type_mismatch or parent_name_mismatch:
                 layout.label(icon="BONE_DATA", text=name)
 
 
