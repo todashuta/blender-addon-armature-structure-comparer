@@ -94,7 +94,7 @@ classes = (
 )
 
 
-def armature_poll_func(self, object):
+def armature_poll_func(self, object) -> bool:
     return object.type == "ARMATURE"
 
 
