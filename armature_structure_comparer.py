@@ -22,7 +22,7 @@ bl_info = {
     "author": "todashuta",
     "version": (1, 0, 2),
     "blender": (2, 80, 0),
-    "location": "3D View > Side Bar > Item > Armature Structure Comparer",
+    "location": "3D View > Side Bar > Armature > Armature Structure Comparer",
     "description": "",
     "warning": "",
     "wiki_url": "",
@@ -37,7 +37,7 @@ import bpy
 class ARMATURE_STRUCTURE_COMPARER_PT_panel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "Item"
+    bl_category = "Armature"
     bl_label = "Armature Structure Comparer"
 
     @classmethod
