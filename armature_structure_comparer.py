@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Armature Structure Comparer",
     "author": "todashuta",
-    "version": (1, 0, 2),
+    "version": (1, 0, 3),
     "blender": (2, 80, 0),
     "location": "3D View > Side Bar > Armature > Armature Structure Comparer",
     "description": "",
@@ -89,8 +89,40 @@ class ARMATURE_STRUCTURE_COMPARER_PT_panel(bpy.types.Panel):
                 layout.label(icon="BONE_DATA", text=name)
 
 
+panels = (
+        ARMATURE_STRUCTURE_COMPARER_PT_panel,
+)
+
+
+def update_panel(self, context):
+    message = "Armature Structure Comparer: Updating Panel locations has failed"
+    try:
+        for panel in panels:
+            if "bl_rna" in panel.__dict__:
+                bpy.utils.unregister_class(panel)
+
+        for panel in panels:
+            panel.bl_category = context.preferences.addons[__name__].preferences.category
+            bpy.utils.register_class(panel)
+
+    except Exception as e:
+        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
+        pass
+
+
+class ARMATURE_STRUCTURE_COMPARER_Preferences(bpy.types.AddonPreferences):
+    bl_idname = __name__
+
+    category: bpy.props.StringProperty(name="Side Bar Tab Category", default="Armature", update=update_panel)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "category")
+
+
 classes = (
         ARMATURE_STRUCTURE_COMPARER_PT_panel,
+        ARMATURE_STRUCTURE_COMPARER_Preferences,
 )
 
 
@@ -105,6 +137,7 @@ def register():
                 name="Armature A", type=bpy.types.Object, poll=armature_poll_func)
     bpy.types.Scene.armature_structure_comparer_armatureB = bpy.props.PointerProperty(
                 name="Armature B", type=bpy.types.Object, poll=armature_poll_func)
+    update_panel(None, bpy.context)
 
 
 def unregister():
