@@ -1,0 +1,10 @@
+fake-bpy-module-2.93
+
+# language server
+python-lsp-server[all]
+pylsp-mypy
+
+# for documentation
+Sphinx
+sphinx-autobuild
+sphinx-rtd-theme
